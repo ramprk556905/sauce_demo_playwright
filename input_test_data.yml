@@ -1,0 +1,5 @@
+filter:
+  a_to_z: 'az'
+  z_to_a: 'za'
+  low_to_high: 'lohi'
+  high_to_low: 'hilo'

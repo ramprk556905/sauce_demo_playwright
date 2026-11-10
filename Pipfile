@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pytest-html = "*"
+pytest-rerunfailures = "*"
+pytest-json = "*"
+pytest-playwright = "*"
+playwright = "*"
+dotenv = "*"
+pyyaml = "*"
+requests = "*"
+pytest = "*"
+
+[dev-packages]
+pyyaml = "*"
+pytest-playwright = "*"
+python-dotenv = "*"
+playwright = "*"
+
+[requires]
+python_version = "3.12"
