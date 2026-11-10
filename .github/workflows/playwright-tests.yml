@@ -1,0 +1,57 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      # .env is git-ignored, so values come from repository secrets instead.
+      base_url: ${{ secrets.BASE_URL }}
+      user_name: ${{ secrets.USER_NAME }}
+      password: ${{ secrets.PASSWORD }}
+      wrong_username: ${{ secrets.WRONG_USERNAME }}
+      wrong_password: ${{ secrets.WRONG_PASSWORD }}
+      upper_username: ${{ secrets.UPPER_USERNAME }}
+      upper_pwd: ${{ secrets.UPPER_PWD }}
+      # GitHub secrets cannot be empty, so the empty-credential cases are set here.
+      empty_user: ""
+      empty_pwd: ""
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Mirrors the Pipfile (Pipfile.lock is git-ignored, so there is no lock to install from).
+          pip install pytest pytest-playwright playwright pytest-html pytest-rerunfailures pytest-json python-dotenv pyyaml requests
+
+      - name: Install Playwright browsers
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run tests
+        run: python -m pytest tests --input-data input_test_data.yml --html=report.html --self-contained-html
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            report.html
+            report.json
+          retention-days: 14
